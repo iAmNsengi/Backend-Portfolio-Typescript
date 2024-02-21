@@ -8,6 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const multer_1 = __importDefault(require("multer"));
 const project_1 = __importDefault(require("../models/project"));
 const check_auth_1 = __importDefault(require("../middleware/check-auth"));
+const joi_1 = __importDefault(require("joi"));
 const router = express_1.default.Router();
 const storage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
@@ -31,6 +32,12 @@ const upload = (0, multer_1.default)({
         fileSize: 1024 * 1024 * 5, // 5 MB
     },
     fileFilter: fileFilter,
+});
+// Define Joi schema for request body validation
+const projectSchema = joi_1.default.object({
+    title: joi_1.default.string().required(),
+    description: joi_1.default.string().required(),
+    link: joi_1.default.string().uri().required(),
 });
 router.get("/", (req, res, next) => {
     project_1.default.find()
@@ -59,16 +66,20 @@ router.get("/", (req, res, next) => {
     });
 });
 router.post("/", check_auth_1.default, upload.single("image"), (req, res, next) => {
-    const { title, description, link } = req.body;
+    // Validate request body against Joi schema
+    const { error, value } = projectSchema.validate(req.body);
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
     if (!req.file) {
         return res.status(400).json({ message: "Image file is missing!" });
     }
     const project = new project_1.default({
         _id: new mongoose_1.default.Types.ObjectId(),
-        title: title,
-        description: description,
+        title: value.title,
+        description: value.description,
         image: req.file.path,
-        link: link,
+        link: value.link,
     });
     project
         .save()
@@ -83,7 +94,7 @@ router.post("/", check_auth_1.default, upload.single("image"), (req, res, next) 
                 link: result.link,
                 request: {
                     type: "GET",
-                    link: `http://nsengi-api.onrender.com/api/v1/${result._id}`,
+                    link: `http://nsengi-api.onrender.com/api/v1/projects/${result._id}`,
                 },
             },
         });
@@ -112,14 +123,19 @@ router.get("/:projectId", (req, res, next) => {
 });
 router.patch("/:projectId", check_auth_1.default, (req, res, next) => {
     const id = req.params.projectId;
-    project_1.default.findOneAndUpdate({ _id: id }, req.body)
+    // Validate request body against Joi schema
+    const { error, value } = projectSchema.validate(req.body);
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
+    project_1.default.findOneAndUpdate({ _id: id }, value)
         .exec()
         .then((result) => {
         res.status(200).json({
             message: "Item updated successfully",
             request: {
                 method: "GET",
-                url: `http://nsengi-api.onrender.com/api/v1/${id}`,
+                url: `http://nsengi-api.onrender.com/api/v1/projects/${id}`,
             },
         });
     })

@@ -3,6 +3,7 @@ import multer from "multer";
 import mongoose from "mongoose";
 import checkAuth from "../middleware/check-auth";
 import Blog from "../models/blog";
+import Joi from "joi";
 
 const router = express.Router();
 
@@ -35,6 +36,13 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
+// Define Joi schema for request body validation
+const blogSchema = Joi.object({
+  title: Joi.string().required(),
+  author: Joi.string().required(),
+  content: Joi.string().required(),
+});
+
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   Blog.find()
     .select("blogImage author title content _id")
@@ -51,9 +59,9 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
             _id: doc._id,
             request: {
               type: "GET",
-              url: "http://nsengi-api.onrender.com/api/v1/blogs/" + doc._id,
+              url: "http://nsengi.onrender.com/api/v1/blogs/" + doc._id,
               imageUrl:
-                "http://nsengi-api.onrender.com/api/v1/" + doc.blogImage,
+                "http://nsengi.onrender.com/api/v1/" + doc.blogImage,
             },
           };
         }),
@@ -75,11 +83,18 @@ router.post(
     if (!req.file) {
       return res.status(400).json({ message: "Image file is missing!" });
     }
+
+    // Validate request body against Joi schema
+    const { error, value } = blogSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
     const blog = new Blog({
       _id: new mongoose.Types.ObjectId(),
-      title: req.body.title,
-      author: req.body.author,
-      content: req.body.content,
+      title: value.title,
+      author: value.author,
+      content: value.content,
       blogImage: req.file.path,
     });
     blog
@@ -95,7 +110,7 @@ router.post(
             content: result.content,
             request: {
               type: "GET",
-              url: "http://nsengi-api.onrender.com/api/v1/blogs/" + result._id,
+              url: "http://nsengi.onrender.com/api/v1/blogs/" + result._id,
             },
           },
         });
@@ -133,14 +148,21 @@ router.patch(
   checkAuth,
   (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.blogId;
-    Blog.findOneAndUpdate({ _id: id }, req.body)
+
+    // Validate request body against Joi schema
+    const { error, value } = blogSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    Blog.findOneAndUpdate({ _id: id }, value)
       .exec()
       .then((result) => {
         res.status(200).json({
           message: "Item updated successfully",
           request: {
             method: "GET",
-            url: "http://nsengi-api.onrender.com/api/v1/blogs/" + id,
+            url: "http://nsengi.onrender.com/api/v1/blogs/" + id,
           },
         });
       })

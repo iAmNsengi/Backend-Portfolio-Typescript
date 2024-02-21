@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import multer from "multer";
 import Project from "../models/project";
 import checkAuth from "../middleware/check-auth";
+import Joi from "joi";
 
 const router = express.Router();
 
@@ -35,6 +36,13 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
+// Define Joi schema for request body validation
+const projectSchema = Joi.object({
+  title: Joi.string().required(),
+  description: Joi.string().required(),
+  link: Joi.string().uri().required(),
+});
+
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   Project.find()
     .select("image title description link _id")
@@ -50,8 +58,8 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
           _id: doc._id,
           request: {
             type: "GET",
-            url: `http://nsengi-api.onrender.com/api/v1/projects/${doc._id}`,
-            imageUrl: `http://nsengi-api.onrender.com/api/v1/${doc.image}`,
+            url: `http://nsengi.onrender.com/api/v1/projects/${doc._id}`,
+            imageUrl: `http://nsengi.onrender.com/api/v1/${doc.image}`,
           },
         })),
       };
@@ -67,17 +75,22 @@ router.post(
   checkAuth,
   upload.single("image"),
   (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, link } = req.body;
+    // Validate request body against Joi schema
+    const { error, value } = projectSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
     if (!req.file) {
       return res.status(400).json({ message: "Image file is missing!" });
     }
 
     const project = new Project({
       _id: new mongoose.Types.ObjectId(),
-      title: title,
-      description: description,
+      title: value.title,
+      description: value.description,
       image: req.file.path,
-      link: link,
+      link: value.link,
     });
 
     project
@@ -93,7 +106,7 @@ router.post(
             link: result.link,
             request: {
               type: "GET",
-              link: `http://nsengi-api.onrender.com/api/v1/${result._id}`,
+              link: `http://nsengi.onrender.com/api/v1/projects/${result._id}`,
             },
           },
         });
@@ -127,14 +140,21 @@ router.patch(
   checkAuth,
   (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.projectId;
-    Project.findOneAndUpdate({ _id: id }, req.body)
+
+    // Validate request body against Joi schema
+    const { error, value } = projectSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    Project.findOneAndUpdate({ _id: id }, value)
       .exec()
       .then((result) => {
         res.status(200).json({
           message: "Item updated successfully",
           request: {
             method: "GET",
-            url: `http://nsengi-api.onrender.com/api/v1/${id}`,
+            url: `http://nsengi.onrender.com/api/v1/projects/${id}`,
           },
         });
       })

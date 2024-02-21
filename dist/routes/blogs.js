@@ -8,6 +8,7 @@ const multer_1 = __importDefault(require("multer"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const check_auth_1 = __importDefault(require("../middleware/check-auth"));
 const blog_1 = __importDefault(require("../models/blog"));
+const joi_1 = __importDefault(require("joi"));
 const router = express_1.default.Router();
 const storage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
@@ -31,6 +32,12 @@ const upload = (0, multer_1.default)({
         fileSize: 1024 * 1024 * 5,
     },
     fileFilter: fileFilter,
+});
+// Define Joi schema for request body validation
+const blogSchema = joi_1.default.object({
+    title: joi_1.default.string().required(),
+    author: joi_1.default.string().required(),
+    content: joi_1.default.string().required(),
 });
 router.get("/", (req, res, next) => {
     blog_1.default.find()
@@ -66,11 +73,16 @@ router.post("/", check_auth_1.default, upload.single("blogImage"), (req, res, ne
     if (!req.file) {
         return res.status(400).json({ message: "Image file is missing!" });
     }
+    // Validate request body against Joi schema
+    const { error, value } = blogSchema.validate(req.body);
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
     const blog = new blog_1.default({
         _id: new mongoose_1.default.Types.ObjectId(),
-        title: req.body.title,
-        author: req.body.author,
-        content: req.body.content,
+        title: value.title,
+        author: value.author,
+        content: value.content,
         blogImage: req.file.path,
     });
     blog
@@ -119,7 +131,12 @@ router.get("/:blogId", (req, res, next) => {
 });
 router.patch("/:blogId", check_auth_1.default, (req, res, next) => {
     const id = req.params.blogId;
-    blog_1.default.findOneAndUpdate({ _id: id }, req.body)
+    // Validate request body against Joi schema
+    const { error, value } = blogSchema.validate(req.body);
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
+    blog_1.default.findOneAndUpdate({ _id: id }, value)
         .exec()
         .then((result) => {
         res.status(200).json({

@@ -1,8 +1,17 @@
 import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import Message, { IMessage } from "../models/message";
+import Joi from "joi";
 
 const router = express.Router();
+
+// Joi schema for message request body validation
+const messageSchema = Joi.object({
+  sender_name: Joi.string().required(),
+  sender_email: Joi.string().email().required(),
+  sender_phone: Joi.string().required(),
+  message_content: Joi.string().required(),
+});
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   Message.find()
@@ -28,12 +37,18 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post("/", (req: Request, res: Response, next: NextFunction) => {
+  // Validate request body against Joi schema
+  const { error, value } = messageSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
   const message = new Message({
     _id: new mongoose.Types.ObjectId(),
-    sender_name: req.body.sender_name,
-    sender_email: req.body.sender_email,
-    sender_phone: req.body.sender_phone,
-    message_content: req.body.message_content,
+    sender_name: value.sender_name,
+    sender_email: value.sender_email,
+    sender_phone: value.sender_phone,
+    message_content: value.message_content,
   });
   message
     .save()
