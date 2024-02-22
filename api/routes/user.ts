@@ -16,6 +16,27 @@ const signUpSchema = Joi.object({
   password: Joi.string().min(6).required(),
 });
 
+/**
+ * @swagger
+ * /api/v1/user/signup:
+ *   post:
+ *     summary: Register a new user
+ *     description: Register a new user with email and password.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserSignup'
+ *     responses:
+ *       '200':
+ *         description: User signed up successfully
+ *       '400':
+ *         description: Bad request, validation error
+ *       '500':
+ *         description: Internal server error
+ */
+
 router.post("/signup", (req: Request, res: Response, next: NextFunction) => {
   // Validate request body against Joi schema
   const { error, value } = signUpSchema.validate(req.body);
@@ -25,6 +46,27 @@ router.post("/signup", (req: Request, res: Response, next: NextFunction) => {
   signUpUser(req, res, next);
 });
 
+
+/**
+ * @swagger
+ * /api/v1/user/login:
+ *   post:
+ *     summary: Login a user
+ *     description: Login a user with email and password.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserLogin'
+ *     responses:
+ *       '200':
+ *         description: User logged in successfully
+ *       '401':
+ *         description: Authentication failed
+ *       '500':
+ *         description: Internal server error
+ */
 router.post("/login", (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
 
@@ -67,6 +109,25 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
     });
 });
 
+/**
+ * @swagger
+ * /api/v1/user/{userId}:
+ *   delete:
+ *     summary: Delete a user account
+ *     description: Delete a user account by user ID.
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: ID of the user account to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: User account deleted successfully
+ *       '500':
+ *         description: Internal server error
+ */
 router.delete("/:userId", (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.userId;
   User.deleteOne({ _id: id })

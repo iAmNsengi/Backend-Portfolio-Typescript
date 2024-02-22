@@ -13,6 +13,31 @@ const messageSchema = Joi.object({
   message_content: Joi.string().required(),
 });
 
+
+/**
+ * @swagger
+ * /api/v1/messages:
+ *   get:
+ *     summary: Retrieve all messages
+ *     description: Retrieve a list of all messages.
+ *     responses:
+ *       '200':
+ *         description: A list of messages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of messages
+ *                 messages:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Message'
+ *       '500':
+ *         description: Internal server error
+ */
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   Message.find()
     .select("_id sender_name sender_email sender_phone message_content")
@@ -36,6 +61,30 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
     });
 });
 
+/**
+ * @swagger
+ * /api/v1/messages:
+ *   post:
+ *     summary: Create a new message
+ *     description: Create a new message with sender details and content.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Message'
+ *     responses:
+ *       '201':
+ *         description: Message created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *       '400':
+ *         description: Bad request, validation error
+ *       '500':
+ *         description: Internal server error
+ */
 router.post("/", (req: Request, res: Response, next: NextFunction) => {
   // Validate request body against Joi schema
   const { error, value } = messageSchema.validate(req.body);
@@ -62,6 +111,32 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
     });
 });
 
+
+/**
+ * @swagger
+ * /api/v1/messages/{messageId}:
+ *   get:
+ *     summary: Retrieve a message by ID
+ *     description: Retrieve a message by its unique ID.
+ *     parameters:
+ *       - in: path
+ *         name: messageId
+ *         required: true
+ *         description: ID of the message to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A single message object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *       '404':
+ *         description: Message not found
+ *       '500':
+ *         description: Internal server error
+ */
 router.get("/:messageId", (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.messageId;
   Message.findById(id)
@@ -80,6 +155,28 @@ router.get("/:messageId", (req: Request, res: Response, next: NextFunction) => {
     });
 });
 
+
+/**
+ * @swagger
+ * /api/v1/messages/{messageId}:
+ *   delete:
+ *     summary: Delete a message by ID
+ *     description: Delete a message by its unique ID.
+ *     parameters:
+ *       - in: path
+ *         name: messageId
+ *         required: true
+ *         description: ID of the message to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Message deleted successfully
+ *       '404':
+ *         description: Message not found
+ *       '500':
+ *         description: Internal server error
+ */
 router.delete(
   "/:messageId",
   (req: Request, res: Response, next: NextFunction) => {

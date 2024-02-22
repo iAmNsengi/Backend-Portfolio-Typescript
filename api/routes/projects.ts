@@ -43,6 +43,32 @@ const projectSchema = Joi.object({
   link: Joi.string().uri().required(),
 });
 
+
+/**
+ * @swagger
+ * /api/v1/projects:
+ *   get:
+ *     summary: Retrieve all projects
+ *     description: Retrieve a list of all projects.
+ *     responses:
+ *       '200':
+ *         description: A list of projects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of projects
+ *                 projects:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Project'
+ *       '500':
+ *         description: Internal server error
+ */
+
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   Project.find()
     .select("image title description link _id")
@@ -70,6 +96,30 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
     });
 });
 
+/**
+ * @swagger
+ * /api/v1/projects:
+ *   post:
+ *     summary: Create a new project
+ *     description: Create a new project with title, description, image, and link.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             $ref: '#/components/schemas/Project'
+ *     responses:
+ *       '201':
+ *         description: Project created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Project'
+ *       '400':
+ *         description: Bad request, validation error
+ *       '500':
+ *         description: Internal server error
+ */
 router.post(
   "/",
   checkAuth,
@@ -117,6 +167,31 @@ router.post(
   }
 );
 
+/**
+ * @swagger
+ * /api/v1/projects/{projectId}:
+ *   get:
+ *     summary: Retrieve a project by ID
+ *     description: Retrieve a project by its unique ID.
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         description: ID of the project to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: A single project object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Project'
+ *       '404':
+ *         description: Project not found
+ *       '500':
+ *         description: Internal server error
+ */
 router.get("/:projectId", (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.projectId;
   Project.findById(id)
@@ -135,6 +210,39 @@ router.get("/:projectId", (req: Request, res: Response, next: NextFunction) => {
     });
 });
 
+/**
+ * @swagger
+ * /api/v1/projects/{projectId}:
+ *   patch:
+ *     summary: Update a project by ID
+ *     description: Update a project by its unique ID.
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         description: ID of the project to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Project'
+ *     responses:
+ *       '200':
+ *         description: Project updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Project'
+ *       '400':
+ *         description: Bad request, validation error
+ *       '404':
+ *         description: Project not found
+ *       '500':
+ *         description: Internal server error
+ */
 router.patch(
   "/:projectId",
   checkAuth,
@@ -164,6 +272,27 @@ router.patch(
   }
 );
 
+/**
+ * @swagger
+ * /api/v1/projects/{projectId}:
+ *   delete:
+ *     summary: Delete a project by ID
+ *     description: Delete a project by its unique ID.
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         description: ID of the project to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Project deleted successfully
+ *       '404':
+ *         description: Project not found
+ *       '500':
+ *         description: Internal server error
+ */
 router.delete(
   "/:projectId",
   checkAuth,
