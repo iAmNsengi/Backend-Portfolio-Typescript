@@ -45,12 +45,7 @@ const blogSchema = Joi.object({
   content: Joi.string().required(),
 });
 
-/**
- * @swagger
- * tags:
- *   name: Blogs
- *   description: API endpoints for managing blogs
- */
+
 
 /**
  * @swagger

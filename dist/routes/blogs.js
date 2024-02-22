@@ -42,12 +42,6 @@ const blogSchema = joi_1.default.object({
 });
 /**
  * @swagger
- * tags:
- *   name: Blogs
- *   description: API endpoints for managing blogs
- */
-/**
- * @swagger
  * /api/v1/blogs:
  *   get:
  *     summary: Get all blogs

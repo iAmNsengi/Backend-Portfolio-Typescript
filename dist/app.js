@@ -33,7 +33,7 @@ mongoose_1.default.connect(process.env.DATABASE_URL);
 mongoose_1.default.Promise = global.Promise;
 // Swagger Documentation
 const specs = (0, swagger_jsdoc_1.default)(swaggerOptions_1.default);
-app.use("/api/v1", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs));
+app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs));
 // Routes
 const blogs_1 = __importDefault(require("./routes/blogs"));
 const messages_1 = __importDefault(require("./routes/messages"));

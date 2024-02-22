@@ -37,7 +37,7 @@ mongoose.Promise = global.Promise;
 
 // Swagger Documentation
 const specs = swaggerJsdoc(swaggerDocs);
-app.use("/api/v1", swaggerUi.serve, swaggerUi.setup(specs));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // Routes
 import blogRoutes from "./routes/blogs";
