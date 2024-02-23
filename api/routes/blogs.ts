@@ -12,11 +12,13 @@ const router = express.Router();
 const storage = multer.diskStorage({
   destination: function (req: any, file, cb) {
     cb(null, "./uploads/");
+
+
   },
   filename: function (req, file, cb) {
     cb(null, new Date().toISOString() + file.originalname);
   },
-});
+}); 
 
 const fileFilter = (
   req: Request,
@@ -44,8 +46,16 @@ const blogSchema = Joi.object({
   author: Joi.string().required(),
   content: Joi.string().required(),
 });
-
-
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     JWTAuth:
+ *       type: apiKey
+ *       in: header
+ *       name: Authorization
+ *       description: Enter JWT token in the format "Bearer <token>"
+ */
 
 /**
  * @swagger
@@ -95,6 +105,8 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
  *   post:
  *     summary: Create a new blog post
  *     description: Create a new blog post with title, author, content, and an optional image.
+ *     security:
+ *       - JWTAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -117,7 +129,7 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Blog'
+ *               $ref: '/models/blog'
  */
 
 router.post(
@@ -168,6 +180,7 @@ router.post(
       });
   }
 );
+
 /**
  * @swagger
  * /api/v1/blogs/{blogId}:

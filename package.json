@@ -20,15 +20,18 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.11",
+    "@types/supertest": "^6.0.2",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.6",
     "jest": "^29.7.0",
     "multer": "^1.4.5-lts.1",
     "supertest": "^6.3.4",
     "swagger-jsdoc": "^6.2.8",
+    "ts-jest": "^29.1.2",
     "typescript": "^5.3.3"
   },
   "name": "backend-ts",
@@ -39,6 +42,9 @@
     "watch:ts": "tsc --watch",
     "test": "jest",
     "generate-swagger": "swagger-jsdoc -o swagger.json ./app.ts"
+  },
+  "jest": {
+    "preset": "ts-jest"
   },
   "author": "",
   "license": "ISC",

@@ -38,6 +38,7 @@ const messageSchema = Joi.object({
  *       '500':
  *         description: Internal server error
  */
+
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   Message.find()
     .select("_id sender_name sender_email sender_phone message_content")

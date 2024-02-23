@@ -16,6 +16,30 @@ const signUpSchema = Joi.object({
   password: Joi.string().min(6).required(),
 });
 
+/**
+ * @swagger
+ * /api/v1/user/signup:
+ *   post:
+ *     summary: Register a new user
+ *     description: Register a new user with email and password.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       '200':
+ *         description: User registered successfully
+ *       '400':
+ *         description: Invalid request body
+ */
 
 
 router.post("/signup", (req: Request, res: Response, next: NextFunction) => {
@@ -27,6 +51,31 @@ router.post("/signup", (req: Request, res: Response, next: NextFunction) => {
   signUpUser(req, res, next);
 });
 
+
+/**
+ * @swagger
+ * /api/v1/user/login:
+ *   post:
+ *     summary: Log in as an existing user
+ *     description: Log in with email and password to obtain a JWT token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       '200':
+ *         description: Authentication successful
+ *       '401':
+ *         description: Unauthorized - Invalid credentials
+ */
 router.post("/login", (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
 
@@ -69,6 +118,26 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
     });
 });
 
+
+/**
+ * @swagger
+ * /api/v1/user/{userId}:
+ *   delete:
+ *     summary: Delete a user account
+ *     description: Delete a user account by their ID.
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: ID of the user account to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: User account deleted successfully
+ *       '404':
+ *         description: User account not found
+ */
 router.delete("/:userId", (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.userId;
   User.deleteOne({ _id: id })

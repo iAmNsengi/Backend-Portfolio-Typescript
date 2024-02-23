@@ -17,6 +17,30 @@ const signUpSchema = joi_1.default.object({
     email: joi_1.default.string().email().required(),
     password: joi_1.default.string().min(6).required(),
 });
+/**
+ * @swagger
+ * /api/v1/user/signup:
+ *   post:
+ *     summary: Register a new user
+ *     description: Register a new user with email and password.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       '200':
+ *         description: User registered successfully
+ *       '400':
+ *         description: Invalid request body
+ */
 router.post("/signup", (req, res, next) => {
     // Validate request body against Joi schema
     const { error, value } = signUpSchema.validate(req.body);
@@ -25,6 +49,30 @@ router.post("/signup", (req, res, next) => {
     }
     (0, user_2.default)(req, res, next);
 });
+/**
+ * @swagger
+ * /api/v1/user/login:
+ *   post:
+ *     summary: Log in as an existing user
+ *     description: Log in with email and password to obtain a JWT token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       '200':
+ *         description: Authentication successful
+ *       '401':
+ *         description: Unauthorized - Invalid credentials
+ */
 router.post("/login", (req, res, next) => {
     const { email, password } = req.body;
     user_1.default.findOne({ email })
@@ -58,6 +106,25 @@ router.post("/login", (req, res, next) => {
         res.status(500).json({ error: err });
     });
 });
+/**
+ * @swagger
+ * /api/v1/user/{userId}:
+ *   delete:
+ *     summary: Delete a user account
+ *     description: Delete a user account by their ID.
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: ID of the user account to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: User account deleted successfully
+ *       '404':
+ *         description: User account not found
+ */
 router.delete("/:userId", (req, res, next) => {
     const id = req.params.userId;
     user_1.default.deleteOne({ _id: id })

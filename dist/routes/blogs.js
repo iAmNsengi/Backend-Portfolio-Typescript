@@ -42,6 +42,16 @@ const blogSchema = joi_1.default.object({
 });
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     JWTAuth:
+ *       type: apiKey
+ *       in: header
+ *       name: Authorization
+ *       description: Enter JWT token in the format "Bearer <token>"
+ */
+/**
+ * @swagger
  * /api/v1/blogs:
  *   get:
  *     summary: Get all blogs
@@ -86,6 +96,8 @@ router.get("/", (req, res, next) => {
  *   post:
  *     summary: Create a new blog post
  *     description: Create a new blog post with title, author, content, and an optional image.
+ *     security:
+ *       - JWTAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -108,7 +120,7 @@ router.get("/", (req, res, next) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Blog'
+ *               $ref: '/models/blog'
  */
 router.post("/", check_auth_1.default, upload.single("blogImage"), (req, res, next) => {
     if (!req.file) {
