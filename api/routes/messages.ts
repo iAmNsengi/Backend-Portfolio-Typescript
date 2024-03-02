@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import Message, { IMessage } from "../models/message";
 import Joi from "joi";
+import checkAuth from "../middleware/check-auth";
 
 const router = express.Router();
 
@@ -12,7 +13,6 @@ const messageSchema = Joi.object({
   sender_phone: Joi.string().required(),
   message_content: Joi.string().required(),
 });
-
 
 /**
  * @swagger
@@ -33,34 +33,36 @@ const messageSchema = Joi.object({
  *                   description: Number of messages
  *                 messages:
  *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Message'
  *       '500':
  *         description: Internal server error
  */
 
-router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  Message.find()
-    .select("_id sender_name sender_email sender_phone message_content")
-    .exec()
-    .then((docs: IMessage[]) => {
-      res.status(200).json({
-        count: docs.length,
-        messages: docs.map((doc: IMessage) => ({
-          _id: doc._id,
-          sender_name: doc.sender_name,
-          sender_email: doc.sender_email,
-          sender_phone: doc.sender_phone,
-          message_content: doc.message_content,
-        })),
+router.get(
+  "/",
+  checkAuth,
+  (req: Request, res: Response, next: NextFunction) => {
+    Message.find()
+      .select("_id sender_name sender_email sender_phone message_content")
+      .exec()
+      .then((docs: IMessage[]) => {
+        res.status(200).json({
+          count: docs.length,
+          messages: docs.map((doc: IMessage) => ({
+            _id: doc._id,
+            sender_name: doc.sender_name,
+            sender_email: doc.sender_email,
+            sender_phone: doc.sender_phone,
+            message_content: doc.message_content,
+          })),
+        });
+      })
+      .catch((err: any) => {
+        res.status(500).json({
+          error: err,
+        });
       });
-    })
-    .catch((err: any) => {
-      res.status(500).json({
-        error: err,
-      });
-    });
-});
+  }
+);
 
 /**
  * @swagger
@@ -73,14 +75,17 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Message'
+ *             type: object
+ *           properties:
+ *             sender_name:
+ *               type: string
  *     responses:
  *       '201':
  *         description: Message created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Message'
+ *               type: object
  *       '400':
  *         description: Bad request, validation error
  *       '500':
@@ -112,7 +117,6 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
     });
 });
 
-
 /**
  * @swagger
  * /api/v1/messages/{messageId}:
@@ -132,7 +136,7 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Message'
+ *               type: object
  *       '404':
  *         description: Message not found
  *       '500':
@@ -155,7 +159,6 @@ router.get("/:messageId", (req: Request, res: Response, next: NextFunction) => {
       });
     });
 });
-
 
 /**
  * @swagger
@@ -180,6 +183,7 @@ router.get("/:messageId", (req: Request, res: Response, next: NextFunction) => {
  */
 router.delete(
   "/:messageId",
+  checkAuth,
   (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.messageId;
     Message.deleteOne({ _id: id })

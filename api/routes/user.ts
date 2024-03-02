@@ -41,7 +41,6 @@ const signUpSchema = Joi.object({
  *         description: Invalid request body
  */
 
-
 router.post("/signup", (req: Request, res: Response, next: NextFunction) => {
   // Validate request body against Joi schema
   const { error, value } = signUpSchema.validate(req.body);
@@ -50,7 +49,6 @@ router.post("/signup", (req: Request, res: Response, next: NextFunction) => {
   }
   signUpUser(req, res, next);
 });
-
 
 /**
  * @swagger
@@ -109,15 +107,14 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
         res.status(200).json({
           message: "Auth successful",
           token: token,
+          _id: user._id,
         });
       });
     })
     .catch((err: any) => {
-      console.log(err);
       res.status(500).json({ error: err });
     });
 });
-
 
 /**
  * @swagger

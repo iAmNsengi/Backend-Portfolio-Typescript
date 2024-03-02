@@ -98,11 +98,11 @@ router.post("/login", (req, res, next) => {
             res.status(200).json({
                 message: "Auth successful",
                 token: token,
+                _id: user._id,
             });
         });
     })
         .catch((err) => {
-        console.log(err);
         res.status(500).json({ error: err });
     });
 });

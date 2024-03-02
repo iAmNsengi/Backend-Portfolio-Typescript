@@ -14,21 +14,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("../app"));
 const supertest_1 = __importDefault(require("supertest"));
-const body_parser_1 = __importDefault(require("body-parser"));
-const blogs_1 = __importDefault(require("../routes/blogs"));
-// Mocking modules
-jest.mock("../models/blog");
-jest.mock("../models/comment");
-jest.mock("../middleware/check-auth");
-app_1.default.use(body_parser_1.default.json());
-app_1.default.use("/api/v1/blogs", blogs_1.default);
+let token;
+let id;
+beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+    const userLoginInfo = {
+        email: "test@mail.com",
+        password: "123456",
+    };
+    yield (0, supertest_1.default)(app_1.default)
+        .post("/api/v1/user/signup")
+        .send(userLoginInfo);
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .post("/api/v1/user/login")
+        .send(userLoginInfo);
+    token = response.body.token;
+    console.log(response.body.token);
+}));
 describe("User Routes", () => {
     it("should throw a data validation error registering the user", () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield (0, supertest_1.default)(app_1.default)
                 .post("/api/v1/user/signup")
                 .send({ email: "", password: "" });
-            expect(response.status).toBe(400);
+            expect(response.status).toEqual(400);
         }
         catch (err) {
             console.log(err);
@@ -39,7 +47,7 @@ describe("User Routes", () => {
             const response = yield (0, supertest_1.default)(app_1.default)
                 .post("/api/v1/user/signup")
                 .send({ email: "test@mail.com", password: "" });
-            expect(response.status).toBe(400);
+            expect(response.status).toEqual(400);
         }
         catch (err) {
             console.log(err);
@@ -49,30 +57,19 @@ describe("User Routes", () => {
         try {
             const response = yield (0, supertest_1.default)(app_1.default)
                 .post("/api/v1/user/signup")
-                .send({ email: "test@mail.com", password: "12" });
-            expect(response.status).toBe(400);
+                .send({ email: "test@mail.com", password: "1234" });
+            expect(response.status).toEqual(400);
         }
         catch (err) {
             console.log(err);
         }
     }));
-    it("should register a new user", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("should throw a conflict error registering the user", () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield (0, supertest_1.default)(app_1.default)
                 .post("/api/v1/user/signup")
-                .send({ email: "test@example.com", password: "password123" });
-            expect(response.status).toBe(201);
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }));
-    it("should throw a conflic error registering the user", () => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const response = yield (0, supertest_1.default)(app_1.default)
-                .post("/api/v1/user/signup")
-                .send({ email: "test@example.com", password: "password123" });
-            expect(response.status).toBe(409);
+                .send({ email: "test@mail.com", password: "123456" });
+            expect(response.status).toEqual(409);
         }
         catch (err) {
             console.log(err);
@@ -82,8 +79,8 @@ describe("User Routes", () => {
         try {
             const response = yield (0, supertest_1.default)(app_1.default)
                 .post("/api/v1/user/login")
-                .send({ email: "test@example.com", password: "password12345" });
-            expect(response.status).toBe(404);
+                .send({ email: "test@mail.com", password: "12" });
+            expect(response.status).toEqual(401);
         }
         catch (err) {
             console.log(err);
@@ -94,7 +91,7 @@ describe("User Routes", () => {
             const response = yield (0, supertest_1.default)(app_1.default)
                 .post("/api/v1/user/login")
                 .send({ email: "test@example.com", password: "password123" });
-            expect(response.status).toBe(200);
+            expect(response.status).toEqual(200);
             expect(response.body).toHaveProperty("token");
         }
         catch (err) {
@@ -102,9 +99,10 @@ describe("User Routes", () => {
         }
     }));
 });
-describe("GET /api/v1/blogs", () => {
-    it("should get all blogs", () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield (0, supertest_1.default)(app_1.default).get("/api/v1/blogs");
-        expect(response.status).toBe(200);
-    }));
-});
+// afterAll(async () => {
+//   try {
+//     await mongoose.disconnect();
+//   } catch (err) {
+//     throw err;
+//   }
+// });

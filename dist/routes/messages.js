@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const message_1 = __importDefault(require("../models/message"));
 const joi_1 = __importDefault(require("joi"));
+const check_auth_1 = __importDefault(require("../middleware/check-auth"));
 const router = express_1.default.Router();
 // Joi schema for message request body validation
 const messageSchema = joi_1.default.object({
@@ -34,12 +35,10 @@ const messageSchema = joi_1.default.object({
  *                   description: Number of messages
  *                 messages:
  *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Message'
  *       '500':
  *         description: Internal server error
  */
-router.get("/", (req, res, next) => {
+router.get("/", check_auth_1.default, (req, res, next) => {
     message_1.default.find()
         .select("_id sender_name sender_email sender_phone message_content")
         .exec()
@@ -72,14 +71,17 @@ router.get("/", (req, res, next) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Message'
+ *             type: object
+ *           properties:
+ *             sender_name:
+ *               type: string
  *     responses:
  *       '201':
  *         description: Message created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Message'
+ *               type: object
  *       '400':
  *         description: Bad request, validation error
  *       '500':
@@ -128,7 +130,7 @@ router.post("/", (req, res, next) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Message'
+ *               type: object
  *       '404':
  *         description: Message not found
  *       '500':
@@ -173,7 +175,7 @@ router.get("/:messageId", (req, res, next) => {
  *       '500':
  *         description: Internal server error
  */
-router.delete("/:messageId", (req, res, next) => {
+router.delete("/:messageId", check_auth_1.default, (req, res, next) => {
     const id = req.params.messageId;
     message_1.default.deleteOne({ _id: id })
         .exec()

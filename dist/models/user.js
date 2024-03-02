@@ -33,5 +33,6 @@ const userSchema = new mongoose_1.Schema({
         match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     },
     password: { type: String, required: true },
+    isSuperUser: { type: Boolean, default: false },
 });
 exports.default = mongoose_1.default.model("User", userSchema);

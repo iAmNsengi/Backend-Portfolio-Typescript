@@ -12,11 +12,9 @@ const router = express.Router();
 const storage = multer.diskStorage({
   destination: function (req: any, file, cb) {
     cb(null, "./uploads/");
-
-
   },
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + file.originalname);
+    cb(null, file.originalname);
   },
 }); 
 
@@ -129,7 +127,6 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '/models/blog'
  */
 
 router.post(
@@ -157,7 +154,6 @@ router.post(
     blog
       .save()
       .then((result: any) => {
-        console.log(result);
         res.status(201).json({
           message: "Blog Post Created Successfully!",
           createdBlog: {
@@ -176,7 +172,6 @@ router.post(
         res.status(500).json({
           error: err,
         });
-        console.log(err);
       });
   }
 );
@@ -209,7 +204,6 @@ router.get("/:blogId", (req: Request, res: Response, next: NextFunction) => {
   Blog.findById(id)
     .exec()
     .then((doc) => {
-      console.log("From database", doc);
       if (doc) {
         res.status(200).json(doc);
       } else {
@@ -451,7 +445,7 @@ router.post(
             message: "Comment added Successfully!",
             createdComment: {
               _id: result._id,
-              commented_by: result.comment_by,
+              comment_by: result.comment_by,
               post_id: result.post_id,
               content: result.comment_content,
             },

@@ -4,6 +4,8 @@ import multer from "multer";
 import Project from "../models/project";
 import checkAuth from "../middleware/check-auth";
 import Joi from "joi";
+import { AuthRequest } from "../middleware/check-auth";
+import User from "../models/user";
 
 const router = express.Router();
 
@@ -12,7 +14,7 @@ const storage = multer.diskStorage({
     cb(null, "./uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + file.originalname);
+    cb(null, file.originalname);
   },
 });
 
@@ -31,7 +33,7 @@ const fileFilter = (
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 1024 * 1024 * 5, // 5 MB
+    fileSize: 1024 * 1024 * 4, // 4 MB
   },
   fileFilter: fileFilter,
 });
@@ -42,7 +44,6 @@ const projectSchema = Joi.object({
   description: Joi.string().required(),
   link: Joi.string().uri().required(),
 });
-
 
 /**
  * @swagger
@@ -127,43 +128,62 @@ router.post(
   (req: Request, res: Response, next: NextFunction) => {
     // Validate request body against Joi schema
     const { error, value } = projectSchema.validate(req.body);
+    const authReq = req as AuthRequest;
+
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ message: "Image file is missing!" });
-    }
+    // access the user ID from authReq.userData
+    if (authReq.userData) {
+      const userId = authReq.userData.userId;
+      User.findOne({ _id: userId } && { isSuperuser: true })
+        .exec()
+        .then((result) => {
+          if (!req.file) {
+            return res.status(400).json({ message: "Image file is missing!" });
+          }
 
-    const project = new Project({
-      _id: new mongoose.Types.ObjectId(),
-      title: value.title,
-      description: value.description,
-      image: req.file.path,
-      link: value.link,
-    });
+          const project = new Project({
+            _id: new mongoose.Types.ObjectId(),
+            title: value.title,
+            description: value.description,
+            image: req.file.path,
+            link: value.link,
+          });
 
-    project
-      .save()
-      .then((result) => {
-        res.status(201).json({
-          message: "Project Created Successfully!",
-          createdProject: {
-            _id: result._id,
-            title: result.title,
-            description: result.description,
-            image: result.image,
-            link: result.link,
-            request: {
-              type: "GET",
-              link: `http://nsengi.onrender.com/api/v1/projects/${result._id}`,
-            },
-          },
+          project
+            .save()
+            .then((result) => {
+              res.status(201).json({
+                message: "Project Created Successfully!",
+                createdProject: {
+                  _id: result._id,
+                  title: result.title,
+                  description: result.description,
+                  image: result.image,
+                  link: result.link,
+                  request: {
+                    type: "GET",
+                    link: `http://nsengi.onrender.com/api/v1/projects/${result._id}`,
+                  },
+                },
+              });
+            })
+            .catch((err) => {
+              res.status(500).json({ error: err });
+            });
+        })
+        .catch((err) => {
+          res.status(401).json({
+            message: "Unauthorized",
+          });
         });
-      })
-      .catch((err) => {
-        res.status(500).json({ error: err });
-      });
+    } else {
+      return res
+        .status(500)
+        .json({ message: "Couldn't Identify yor Login details" });
+    }
   }
 );
 

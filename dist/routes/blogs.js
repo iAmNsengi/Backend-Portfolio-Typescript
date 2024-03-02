@@ -16,7 +16,7 @@ const storage = multer_1.default.diskStorage({
         cb(null, "./uploads/");
     },
     filename: function (req, file, cb) {
-        cb(null, new Date().toISOString() + file.originalname);
+        cb(null, file.originalname);
     },
 });
 const fileFilter = (req, file, cb) => {
@@ -120,7 +120,6 @@ router.get("/", (req, res, next) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '/models/blog'
  */
 router.post("/", check_auth_1.default, upload.single("blogImage"), (req, res, next) => {
     if (!req.file) {
@@ -141,7 +140,6 @@ router.post("/", check_auth_1.default, upload.single("blogImage"), (req, res, ne
     blog
         .save()
         .then((result) => {
-        console.log(result);
         res.status(201).json({
             message: "Blog Post Created Successfully!",
             createdBlog: {
@@ -160,7 +158,6 @@ router.post("/", check_auth_1.default, upload.single("blogImage"), (req, res, ne
         res.status(500).json({
             error: err,
         });
-        console.log(err);
     });
 });
 /**
@@ -191,7 +188,6 @@ router.get("/:blogId", (req, res, next) => {
     blog_1.default.findById(id)
         .exec()
         .then((doc) => {
-        console.log("From database", doc);
         if (doc) {
             res.status(200).json(doc);
         }
@@ -408,7 +404,7 @@ router.post("/:postId/comments", check_auth_1.default, (req, res, next) => {
                 message: "Comment added Successfully!",
                 createdComment: {
                     _id: result._id,
-                    commented_by: result.comment_by,
+                    comment_by: result.comment_by,
                     post_id: result.post_id,
                     content: result.comment_content,
                 },

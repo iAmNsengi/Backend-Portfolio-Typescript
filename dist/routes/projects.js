@@ -9,13 +9,14 @@ const multer_1 = __importDefault(require("multer"));
 const project_1 = __importDefault(require("../models/project"));
 const check_auth_1 = __importDefault(require("../middleware/check-auth"));
 const joi_1 = __importDefault(require("joi"));
+const user_1 = __importDefault(require("../models/user"));
 const router = express_1.default.Router();
 const storage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "./uploads/");
     },
     filename: function (req, file, cb) {
-        cb(null, new Date().toISOString() + file.originalname);
+        cb(null, file.originalname);
     },
 });
 const fileFilter = (req, file, cb) => {
@@ -29,7 +30,7 @@ const fileFilter = (req, file, cb) => {
 const upload = (0, multer_1.default)({
     storage: storage,
     limits: {
-        fileSize: 1024 * 1024 * 5, // 5 MB
+        fileSize: 1024 * 1024 * 4, // 4 MB
     },
     fileFilter: fileFilter,
 });
@@ -116,40 +117,59 @@ router.get("/", (req, res, next) => {
 router.post("/", check_auth_1.default, upload.single("image"), (req, res, next) => {
     // Validate request body against Joi schema
     const { error, value } = projectSchema.validate(req.body);
+    const authReq = req;
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
     }
-    if (!req.file) {
-        return res.status(400).json({ message: "Image file is missing!" });
-    }
-    const project = new project_1.default({
-        _id: new mongoose_1.default.Types.ObjectId(),
-        title: value.title,
-        description: value.description,
-        image: req.file.path,
-        link: value.link,
-    });
-    project
-        .save()
-        .then((result) => {
-        res.status(201).json({
-            message: "Project Created Successfully!",
-            createdProject: {
-                _id: result._id,
-                title: result.title,
-                description: result.description,
-                image: result.image,
-                link: result.link,
-                request: {
-                    type: "GET",
-                    link: `http://nsengi.onrender.com/api/v1/projects/${result._id}`,
-                },
-            },
+    // access the user ID from authReq.userData
+    if (authReq.userData) {
+        const userId = authReq.userData.userId;
+        user_1.default.findOne({ _id: userId } && { isSuperuser: true })
+            .exec()
+            .then((result) => {
+            if (!req.file) {
+                return res.status(400).json({ message: "Image file is missing!" });
+            }
+            const project = new project_1.default({
+                _id: new mongoose_1.default.Types.ObjectId(),
+                title: value.title,
+                description: value.description,
+                image: req.file.path,
+                link: value.link,
+            });
+            project
+                .save()
+                .then((result) => {
+                res.status(201).json({
+                    message: "Project Created Successfully!",
+                    createdProject: {
+                        _id: result._id,
+                        title: result.title,
+                        description: result.description,
+                        image: result.image,
+                        link: result.link,
+                        request: {
+                            type: "GET",
+                            link: `http://nsengi.onrender.com/api/v1/projects/${result._id}`,
+                        },
+                    },
+                });
+            })
+                .catch((err) => {
+                res.status(500).json({ error: err });
+            });
+        })
+            .catch((err) => {
+            res.status(401).json({
+                message: "Unauthorized",
+            });
         });
-    })
-        .catch((err) => {
-        res.status(500).json({ error: err });
-    });
+    }
+    else {
+        return res
+            .status(500)
+            .json({ message: "Couldn't Identify yor Login details" });
+    }
 });
 /**
  * @swagger
