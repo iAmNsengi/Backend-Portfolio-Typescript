@@ -28,7 +28,7 @@ jobs:
       - name: Run Jest Tests
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          MONGO_URI: ${{ secrets.MONGO_URI }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           github-token: ${{ github.token }}
         run: npm run test
 
