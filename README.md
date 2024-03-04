@@ -1,2 +1,1 @@
-# Backend-Portfolio-Typescript
- The Typescript Verison of my Portfolio API
+<a href='https://coveralls.io/github/iAmNsengi/Backend-Portfolio-Typescript?branch=main'><img src='https://coveralls.io/repos/github/iAmNsengi/Backend-Portfolio-Typescript/badge.svg?branch=main' alt='Coverage Status' /></a>
