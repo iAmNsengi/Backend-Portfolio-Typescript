@@ -42,7 +42,7 @@
   "scripts": {
     "start": "nodemon ./dist/index.js",
     "watch:ts": "tsc --watch",
-    "test": "jest",
+    "test": "jest --coverage",
     "generate-swagger": "swagger-jsdoc -o swagger.json ./app.ts"
   },
   "jest": {

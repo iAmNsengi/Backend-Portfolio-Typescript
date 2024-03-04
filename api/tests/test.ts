@@ -77,7 +77,7 @@ describe("users", () => {
           expect.stringContaining("json")
         );
       } catch (err) {
-        throw err; // Re-throw the error to fail the test
+        throw err; 
       }
     }, 150000);
 

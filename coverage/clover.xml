@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1709535685165" clover="3.2.0">
-  <project timestamp="1709535685165" name="All files">
-    <metrics statements="711" coveredstatements="610" conditionals="335" coveredconditionals="260" methods="205" coveredmethods="141" elements="1251" coveredelements="1011" complexity="0" loc="711" ncloc="711" packages="10" files="26" classes="26"/>
+<coverage generated="1709543662358" clover="3.2.0">
+  <project timestamp="1709543662358" name="All files">
+    <metrics statements="711" coveredstatements="611" conditionals="335" coveredconditionals="260" methods="205" coveredmethods="142" elements="1251" coveredelements="1013" complexity="0" loc="711" ncloc="711" packages="10" files="26" classes="26"/>
     <package name="api">
       <metrics statements="43" coveredstatements="41" conditionals="3" coveredconditionals="1" methods="3" coveredmethods="3"/>
       <file name="app.ts" path="C:\Users\Mr Robot\Desktop\Backend\api\app.ts">
@@ -584,9 +584,9 @@
       </file>
     </package>
     <package name="dist.routes">
-      <metrics statements="223" coveredstatements="185" conditionals="76" coveredconditionals="62" methods="78" coveredmethods="53"/>
+      <metrics statements="223" coveredstatements="186" conditionals="76" coveredconditionals="62" methods="78" coveredmethods="54"/>
       <file name="blogs.js" path="C:\Users\Mr Robot\Desktop\Backend\dist\routes\blogs.js">
-        <metrics statements="89" coveredstatements="76" conditionals="27" coveredconditionals="22" methods="33" coveredmethods="24"/>
+        <metrics statements="89" coveredstatements="77" conditionals="27" coveredconditionals="22" methods="33" coveredmethods="25"/>
         <line num="2" count="1" type="cond" truecount="3" falsecount="0"/>
         <line num="3" count="7" type="cond" truecount="4" falsecount="0"/>
         <line num="5" count="1" type="stmt"/>
@@ -609,10 +609,10 @@
         <line num="38" count="1" type="stmt"/>
         <line num="63" count="1" type="stmt"/>
         <line num="64" count="2" type="stmt"/>
-        <line num="68" count="2" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
         <line num="71" count="1" type="stmt"/>
-        <line num="85" count="2" type="stmt"/>
-        <line num="88" count="0" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
         <line num="124" count="1" type="stmt"/>
         <line num="125" count="2" type="cond" truecount="1" falsecount="1"/>
         <line num="126" count="0" type="stmt"/>
