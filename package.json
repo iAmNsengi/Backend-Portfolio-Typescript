@@ -43,6 +43,7 @@
     "start": "nodemon ./dist/index.js",
     "watch:ts": "tsc --watch",
     "test": "jest --coverage",
+    "test:coverage": "rm -rf ./coverage && jest --coverage --detectOpenHandles",
     "generate-swagger": "swagger-jsdoc -o swagger.json ./app.ts"
   },
   "jest": {
