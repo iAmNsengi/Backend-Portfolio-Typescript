@@ -1,1 +1,2 @@
 <a href='https://coveralls.io/github/iAmNsengi/Backend-Portfolio-Typescript?branch=main'><img src='https://coveralls.io/repos/github/iAmNsengi/Backend-Portfolio-Typescript/badge.svg?branch=main' alt='Coverage Status' /></a>
+[![Tests](https://github.com/iAmNsengi/Backend-Portfolio-Typescript/actions/workflows/tests.yaml/badge.svg)](https://github.com/iAmNsengi/Backend-Portfolio-Typescript/actions/workflows/tests.yaml)
