@@ -30,7 +30,7 @@ jobs:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           MONGO_URI: ${{ secrets.MONGO_URI }}
           github-token: ${{ github.token }}
-        run: npm run test:coverage
+        run: npm run test
 
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v2.2.3
