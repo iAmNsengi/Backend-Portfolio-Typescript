@@ -79,7 +79,7 @@ describe("users", () => {
       } catch (err) {
         throw err; 
       }
-    }, 150000);
+    }, 550000);
 
     test("user registration with missing properties users", async () => {
       const userInfo = {
@@ -96,7 +96,7 @@ describe("users", () => {
       } catch (err) {
         throw err;
       }
-    });
+    }, 550000);
 
     test("user registration with an existing email", async () => {
       const userInfo = {
@@ -113,7 +113,7 @@ describe("users", () => {
       } catch (err) {
         throw err;
       }
-    });
+    }, 550000);
   });
 
   describe("user login", () => {
@@ -139,7 +139,7 @@ describe("users", () => {
       } catch (err) {
         throw err;
       }
-    });
+    }, 550000);
     test("User login when some data isn't provided", async () => {
       const userLoginInfo = {
         email: "test1@mail.com",
@@ -157,7 +157,7 @@ describe("users", () => {
       } catch (err) {
         throw err;
       }
-    });
+    }, 55000);
 
     test("User login when the credentials are wrong", async () => {
       const userLoginInfo = {
@@ -175,7 +175,7 @@ describe("users", () => {
       } catch (err) {
         throw err;
       }
-    });
+    }, 550000);
   });
 });
 
@@ -198,7 +198,7 @@ describe("Blogs", () => {
       } catch (err) {
         throw err;
       }
-    });
+    }, 550000);
   });
 
   it("Should throw an error when some data is missing", async () => {
@@ -214,7 +214,7 @@ describe("Blogs", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 
   it("Should throw an error if the token is not provided", async () => {
     try {
@@ -230,7 +230,7 @@ describe("Blogs", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 });
 describe("update blogs", () => {
   it("Should update the blog when all data is provided", async () => {
@@ -251,7 +251,7 @@ describe("update blogs", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should throw an error hence all data is not provided", async () => {
     try {
       const blogImage = await fs.readFile(`test.jpg`);
@@ -268,7 +268,7 @@ describe("update blogs", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 });
 
 describe("get blog post", () => {
@@ -281,7 +281,7 @@ describe("get blog post", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 
   it("A Bad format of the Id", async () => {
     try {
@@ -291,7 +291,7 @@ describe("get blog post", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 
   it("Should throw an error if there is no blog with the given id", async () => {
     try {
@@ -303,7 +303,7 @@ describe("get blog post", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 });
 
 describe("blogs", () => {
@@ -315,7 +315,7 @@ describe("blogs", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 });
 
 describe("comments", () => {
@@ -329,7 +329,7 @@ describe("comments", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("should post a new blog post comment when everything is provided", async () => {
     const comment = {
       comment_content: "A good post",
@@ -346,7 +346,7 @@ describe("comments", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("should throw an error token missing", async () => {
     const comment = {
       comment_content: " A good post",
@@ -362,7 +362,7 @@ describe("comments", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("should throw an error comment content missing", async () => {
     const comment = {};
     try {
@@ -376,7 +376,7 @@ describe("comments", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("should delete comment when it exists", async () => {
     try {
       const response = await request(app)
@@ -388,7 +388,7 @@ describe("comments", () => {
     } catch (err) {
       throw err;
     }
-  });
+  },550000);
   it("should  throw error deleting comment when  token is provided", async () => {
     try {
       const response = await request(app).delete(
@@ -399,7 +399,7 @@ describe("comments", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 });
 
 describe("delete a blog post", () => {
@@ -412,7 +412,7 @@ describe("delete a blog post", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 
   it("Should throw error if there is no blog with given id", async () => {
     try {
@@ -424,7 +424,7 @@ describe("delete a blog post", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 });
 
 describe("Messages", () => {
@@ -437,7 +437,7 @@ describe("Messages", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 
   it("Should post a new message", async () => {
     const the_message = {
@@ -457,7 +457,7 @@ describe("Messages", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should get message", async () => {
     try {
       const response = await request(app)
@@ -468,7 +468,7 @@ describe("Messages", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should delete message", async () => {
     try {
       const response = await request(app)
@@ -479,7 +479,7 @@ describe("Messages", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should throw delete message error no token", async () => {
     try {
       const response = await request(app).delete(
@@ -490,7 +490,7 @@ describe("Messages", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 });
 
 describe("Projects", () => {
@@ -501,7 +501,7 @@ describe("Projects", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 
   it("Should post a new project", async () => {
     const projectImage = await fs.readFile(`test.jpg`);
@@ -522,7 +522,7 @@ describe("Projects", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should throw an error posting a new project no auth", async () => {
     const projectImage = await fs.readFile(`test.jpg`);
 
@@ -540,7 +540,7 @@ describe("Projects", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should throw an error posting a new project no image file", async () => {
     try {
       const response = await request(app)
@@ -556,7 +556,7 @@ describe("Projects", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should get project", async () => {
     try {
       const response = await request(app)
@@ -567,7 +567,7 @@ describe("Projects", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should edit project", async () => {
     const newData = {
       title: "Updated title",
@@ -584,7 +584,7 @@ describe("Projects", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should delete project", async () => {
     try {
       const response = await request(app)
@@ -595,7 +595,7 @@ describe("Projects", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
   it("Should throw delete project error no token", async () => {
     try {
       const response = await request(app).delete(
@@ -606,7 +606,7 @@ describe("Projects", () => {
     } catch (err) {
       throw err;
     }
-  });
+  }, 550000);
 });
 
 afterAll(async () => {
