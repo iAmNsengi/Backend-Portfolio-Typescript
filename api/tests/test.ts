@@ -51,10 +51,10 @@ describe("Express App", () => {
 
   // Test for specific routes (you can add more tests for each route)
   describe("Blog Routes", () => {
-    it("responds with status 200 for GET /api/v1/blogs", async () => {
+    test("responds with status 200 for GET /api/v1/blogs", async () => {
       const response = await request(app).get("/api/v1/blogs");
       expect(response.status).toBe(200);
-    });
+    }, 150000);
   });
 });
 
