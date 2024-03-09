@@ -10,6 +10,7 @@ import swaggerDocs from "./swaggerOptions";
 dotenv.config();
 
 const app = express();
+app.use(cors());
 
 // Middleware
 app.use(morgan("dev"));
