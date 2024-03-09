@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocs from "./swaggerOptions";
+import cors from "cors";
 
 dotenv.config();
 
