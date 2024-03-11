@@ -18,6 +18,8 @@ app.use(morgan("dev"));
 app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 
 // CORS Middleware
 app.use((req: Request, res: Response, next: NextFunction) => {

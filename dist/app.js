@@ -20,6 +20,8 @@ app.use((0, morgan_1.default)("dev"));
 app.use("/uploads", express_1.default.static("uploads"));
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
+app.use(body_parser_1.default.json({ limit: "10mb" }));
+app.use(body_parser_1.default.urlencoded({ extended: true, limit: "10mb" }));
 // CORS Middleware
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
